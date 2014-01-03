@@ -5,11 +5,11 @@ define([
 ], function (registerSuite, assert, MemoryStore) {
 	var store = new MemoryStore({
 		data: [
-			{id: 1, name: 'one',	even: false,	prime: false,	mappedTo: 'E', date: new Date(1970, 0, 1) },
-			{id: 2, name: 'two',	even: true,		prime: true,	mappedTo: 'D', date: new Date(1980, 1, 2) },
-			{id: 3, name: 'three',	even: false,	prime: true,	mappedTo: 'C', date: new Date(1990, 2, 3) },
-			{id: 4, name: 'four',	even: true,		prime: false,	mappedTo: null, date: new Date(1972, 3, 6, 12, 1) },
-			{id: 5, name: 'five',	even: false,	prime: true,	mappedTo: 'A', date: new Date(1972, 3, 6, 6, 2) }
+			{ id: 1, name: 'one',	even: false,	prime: false,	mappedTo: 'E', date: new Date(1970, 0, 1) },
+			{ id: 2, name: 'two',	even: true,		prime: true,	mappedTo: 'D', date: new Date(1980, 1, 2) },
+			{ id: 3, name: 'three',	even: false,	prime: true,	mappedTo: 'C', date: new Date(1990, 2, 3) },
+			{ id: 4, name: 'four',	even: true,		prime: false,	mappedTo: null, date: new Date(1972, 3, 6, 12, 1) },
+			{ id: 5, name: 'five',	even: false,	prime: true,	mappedTo: 'A', date: new Date(1972, 3, 6, 6, 2) }
 		]
 	});
 
@@ -26,24 +26,24 @@ define([
 
 		'.query': {
 			'with boolean': function () {
-				assert.strictEqual(store.query({prime: true}).length, 3);
-				assert.strictEqual(store.query({even: true})[1].name, 'four');
+				assert.strictEqual(store.query({ prime: true }).length, 3);
+				assert.strictEqual(store.query({ even: true })[1].name, 'four');
 			},
 
 			'with string': function () {
-				assert.strictEqual(store.query({name: 'two'}).length, 1);
-				assert.strictEqual(store.query({name: 'two'})[0].name, 'two');
+				assert.strictEqual(store.query({ name: 'two' }).length, 1);
+				assert.strictEqual(store.query({ name: 'two' })[0].name, 'two');
 			},
 
 			'with RegExp': function () {
-				assert.strictEqual(store.query({name: /^t/}).length, 2);
-				assert.strictEqual(store.query({name: /^t/})[1].name, 'three');
-				assert.strictEqual(store.query({name: /^o/}).length, 1);
-				assert.strictEqual(store.query({name: /o/}).length, 3);
+				assert.strictEqual(store.query({ name: /^t/ }).length, 2);
+				assert.strictEqual(store.query({ name: /^t/ })[1].name, 'three');
+				assert.strictEqual(store.query({ name: /^o/ }).length, 1);
+				assert.strictEqual(store.query({ name: /o/ }).length, 3);
 			},
 
 			'with test function': function () {
-				var lowIdItems = store.query({id: {
+				var lowIdItems = store.query({ id: {
 					test: function (id) {
 						return id < 4;
 					}
@@ -51,7 +51,7 @@ define([
 
 				assert.strictEqual(lowIdItems.length, 3);
 
-				var evenItems = store.query({even: {
+				var evenItems = store.query({ even: {
 					test: function (even, object) {
 						return even && object.id > 2;
 					}
@@ -61,14 +61,14 @@ define([
 			},
 
 			'with sort': function () {
-				assert.strictEqual(store.query({prime: true}, {sort: [{attribute:'name'}]}).length, 3);
-				assert.strictEqual(store.query({even: true}, {sort: [{attribute:'name'}]})[1].name, 'two');
+				assert.strictEqual(store.query({ prime: true }, { sort: [ { attribute: 'name' } ] }).length, 3);
+				assert.strictEqual(store.query({ even: true }, { sort: [ { attribute: 'name' } ] })[1].name, 'two');
 
-				assert.strictEqual(store.query({even: true}, {sort: function (a, b) {
+				assert.strictEqual(store.query({ even: true }, { sort: function (a, b) {
 					return a.name < b.name ? -1 : 1;
 				}})[1].name, 'two');
 
-				assert.strictEqual(store.query(null, {sort: [{attribute:'mappedTo'}]})[4].name, 'four');
+				assert.strictEqual(store.query(null, { sort: [ { attribute: 'mappedTo' } ] })[4].name, 'four');
 
 				assert.deepEqual(store.query({}, { sort: [ { attribute: 'date', descending: false } ] }).map(function (item) {
 					return item.id;
@@ -76,8 +76,8 @@ define([
 			},
 
 			'with paging': function () {
-				assert.strictEqual(store.query({prime: true}, {start: 1, count: 1}).length, 1);
-				assert.strictEqual(store.query({even: true}, {start: 1, count: 1})[0].name, 'four');
+				assert.strictEqual(store.query({ prime: true }, { start: 1, count: 1 }).length, 1);
+				assert.strictEqual(store.query({ even: true }, { start: 1, count: 1 })[0].name, 'four');
 			}
 		},
 
@@ -150,24 +150,24 @@ define([
 		'misc': {
 			// This test is dependent on the state of the data after manipulation from previous tests
 			'query after changes': function () {
-				assert.strictEqual(store.query({prime: true}).length, 3);
-				assert.strictEqual(store.query({perfect: true}).length, 1);
+				assert.strictEqual(store.query({ prime: true }).length, 3);
+				assert.strictEqual(store.query({ perfect: true }).length, 1);
 			},
 
 			'IFRS style data': function () {
 				var anotherStore = new MemoryStore({
 					data: {
 						items: [
-							{name: 'one',	even: false,	prime: false},
-							{name: 'two',	even: true,		prime: true},
-							{name: 'three',	even: false,	prime: true}
+							{ name: 'one',		even: false,	prime: false },
+							{ name: 'two',		even: true,		prime: true },
+							{ name: 'three',	even: false,	prime: true }
 						],
 						identifier: 'name'
 					}
 				});
 
 				assert.strictEqual(anotherStore.get('one').name, 'one');
-				assert.strictEqual(anotherStore.query({name: 'one'})[0].name, 'one');
+				assert.strictEqual(anotherStore.query({ name: 'one' })[0].name, 'one');
 			}
 		}
 	});
