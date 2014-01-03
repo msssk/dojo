@@ -16,7 +16,7 @@ define([
 	registerSuite({
 		name: 'dojo/store/Memory',
 
-		'get': [
+		'.get': [
 			function () {
 				assert.strictEqual(store.get(1).name, 'one');
 				assert.strictEqual(store.get(4).name, 'four');
@@ -24,7 +24,7 @@ define([
 			}
 		],
 
-		'query': {
+		'.query': {
 			'with boolean': function () {
 				assert.strictEqual(store.query({prime: true}).length, 3);
 				assert.strictEqual(store.query({even: true})[1].name, 'four');
@@ -81,7 +81,7 @@ define([
 			}
 		},
 
-		'put': {
+		'.put': {
 			'update': function () {
 				var four = store.get(4);
 				four.square = true;
@@ -99,7 +99,7 @@ define([
 			}
 		},
 
-		'add': {
+		'.add': {
 			'duplicate': function () {
 				var threw;
 
@@ -134,7 +134,7 @@ define([
 			}
 		},
 
-		'remove': {
+		'.remove': {
 			'existing item': function () {
 				assert.ok(store.remove(7));
 				assert.ok(!store.get(7));
