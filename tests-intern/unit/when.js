@@ -5,40 +5,40 @@ define([
 	'dojo/promise/Promise',
 	'dojo/when'
 ], function (registerSuite, assert, Deferred, Promise, when) {
+	var emptyObject = {};
+	var dfd;
+
 	registerSuite({
 		name: 'dojo/when',
 
-		"return the same promise without callbacks": function () {
-			var obj = {};
-			var promise1 = when(obj);
+		'return the same promise without callbacks': function () {
+			var promise1 = when(emptyObject);
 
-			assert.ok(promise1 instanceof Promise);
+			assert.instanceOf(promise1, Promise);
 
-			var dfd = new Deferred();
+			dfd = new Deferred();
 			var promise2 = when(dfd.promise);
 
-			assert.ok(promise2 instanceof Promise);
-			assert.ok(dfd.promise === promise2);
+			assert.instanceOf(promise2, Promise);
+			assert.strictEqual(dfd.promise, promise2);
 		},
 
-		"don't convert to promise if errback is passed but no callback": function () {
-			var obj = {};
-			var result = when(obj, null, function () {});
+		'do not convert to promise if errback is passed but no callback': function () {
+			var result = when(emptyObject, null, function () {});
 
-			assert.strictEqual(result, obj);
+			assert.strictEqual(result, emptyObject);
 		},
 
-		"with a result value": function () {
-			var obj = {};
+		'with a result value': function () {
 			var received;
 
-			when(obj, function (result) {
+			when(emptyObject, function (result) {
 				received = result;
 			});
-			assert.strictEqual(received, obj);
+			assert.strictEqual(received, emptyObject);
 		},
 
-		"with a result value, return result of callback": function () {
+		'with a result value, return result of callback': function () {
 			var obj1 = {};
 			var obj2 = {};
 			var received;
@@ -51,43 +51,40 @@ define([
 			assert.strictEqual(returned, obj2);
 		},
 
-		"with a promise that gets resolved": function () {
-			var obj = {};
+		'with a promise that gets resolved': function () {
 			var received;
-			var dfd = new Deferred();
 
+			dfd = new Deferred();
 			when(dfd.promise, function (result) {
 				received = result;
 			});
-			dfd.resolve(obj);
-			assert.strictEqual(received, obj);
+			dfd.resolve(emptyObject);
+			assert.strictEqual(received, emptyObject);
 		},
 
-		"with a promise that gets rejected": function () {
-			var obj = {};
+		'with a promise that gets rejected': function () {
 			var received;
-			var dfd = new Deferred();
 
+			dfd = new Deferred();
 			when(dfd.promise, null, function (result) {
 				received = result;
 			});
-			dfd.reject(obj);
-			assert.strictEqual(received, obj);
+			dfd.reject(emptyObject);
+			assert.strictEqual(received, emptyObject);
 		},
 
-		"with a promise that gets progress": function () {
-			var obj = {};
+		'with a promise that gets progress': function () {
 			var received;
-			var dfd = new Deferred();
 
+			dfd = new Deferred();
 			when(dfd.promise, null, null, function (result) {
 				received = result;
 			});
-			dfd.progress(obj);
-			assert.strictEqual(received, obj);
+			dfd.progress(emptyObject);
+			assert.strictEqual(received, emptyObject);
 		},
 
-		"with chaining of the result": function () {
+		'with chaining of the result': function () {
 			var received;
 
 			function square(n){ return n * n; }
@@ -98,7 +95,7 @@ define([
 			assert.strictEqual(received, 16);
 		},
 
-		"convert foreign promise": function () {
+		'convert foreign promise': function () {
 			var _callback;
 			var foreign = {
 				then: function (cb) {
@@ -106,15 +103,14 @@ define([
 				}
 			};
 			var promise = when(foreign);
-			var obj = {};
 			var received;
 
 			promise.then(function (result) {
 				received = result;
 			});
-			_callback(obj);
-			assert.ok(promise instanceof Promise);
-			assert.strictEqual(received, obj);
+			_callback(emptyObject);
+			assert.instanceOf(promise, Promise);
+			assert.strictEqual(received, emptyObject);
 		}
 	});
 });
