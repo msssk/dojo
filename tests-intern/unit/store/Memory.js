@@ -3,14 +3,16 @@ define([
 	'intern/chai!assert',
 	'dojo/store/Memory'
 ], function (registerSuite, assert, MemoryStore) {
+	var data = [
+		{ id: 1, name: 'one',	even: false,	prime: false,	mappedTo: 'E', date: new Date(1970, 0, 1) },
+		{ id: 2, name: 'two',	even: true,		prime: true,	mappedTo: 'D', date: new Date(1980, 1, 2) },
+		{ id: 3, name: 'three',	even: false,	prime: true,	mappedTo: 'C', date: new Date(1990, 2, 3) },
+		{ id: 4, name: 'four',	even: true,		prime: false,	mappedTo: null, date: new Date(1972, 3, 6, 12, 1) },
+		{ id: 5, name: 'five',	even: false,	prime: true,	mappedTo: 'A', date: new Date(1972, 3, 6, 6, 2) }
+	];
+
 	var store = new MemoryStore({
-		data: [
-			{ id: 1, name: 'one',	even: false,	prime: false,	mappedTo: 'E', date: new Date(1970, 0, 1) },
-			{ id: 2, name: 'two',	even: true,		prime: true,	mappedTo: 'D', date: new Date(1980, 1, 2) },
-			{ id: 3, name: 'three',	even: false,	prime: true,	mappedTo: 'C', date: new Date(1990, 2, 3) },
-			{ id: 4, name: 'four',	even: true,		prime: false,	mappedTo: null, date: new Date(1972, 3, 6, 12, 1) },
-			{ id: 5, name: 'five',	even: false,	prime: true,	mappedTo: 'A', date: new Date(1972, 3, 6, 6, 2) }
-		]
+		data: data
 	});
 
 	registerSuite({
@@ -61,14 +63,22 @@ define([
 			},
 
 			'with sort': function () {
+				var sortedByMappedTo = [data[4], data[2], data[1], data[0], data[3]];
+				// Must add "total" property to match store query result
+				sortedByMappedTo.total = 5;
+
+				var evenSortedByName = [data[3], data[1]];
+				// Must add "total" property to match store query result
+				evenSortedByName.total = 2;
+
 				assert.strictEqual(store.query({ prime: true }, { sort: [ { attribute: 'name' } ] }).length, 3);
-				assert.strictEqual(store.query({ even: true }, { sort: [ { attribute: 'name' } ] })[1].name, 'two');
+				assert.deepEqual(store.query({ even: true }, { sort: [ { attribute: 'name' } ] }), evenSortedByName);
 
-				assert.strictEqual(store.query({ even: true }, { sort: function (a, b) {
+				assert.deepEqual(store.query({ even: true }, { sort: function (a, b) {
 					return a.name < b.name ? -1 : 1;
-				}})[1].name, 'two');
+				}}), evenSortedByName);
 
-				assert.strictEqual(store.query(null, { sort: [ { attribute: 'mappedTo' } ] })[4].name, 'four');
+				assert.deepEqual(store.query(null, { sort: [ { attribute: 'mappedTo' } ] }), sortedByMappedTo);
 
 				assert.deepEqual(store.query({}, { sort: [ { attribute: 'date', descending: false } ] }).map(function (item) {
 					return item.id;
@@ -148,12 +158,6 @@ define([
 		},
 
 		'misc': {
-			// This test is dependent on the state of the data after manipulation from previous tests
-			'query after changes': function () {
-				assert.strictEqual(store.query({ prime: true }).length, 3);
-				assert.strictEqual(store.query({ perfect: true }).length, 1);
-			},
-
 			'IFRS style data': function () {
 				var anotherStore = new MemoryStore({
 					data: {
