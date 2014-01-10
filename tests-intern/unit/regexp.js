@@ -12,8 +12,8 @@ define([
 			var re1 = new RegExp(regexp.escapeString(regexpString));
 			var re2 = new RegExp(regexp.escapeString(regexpString, '.'));
 
-			assert.ok(re1.test('TEST\f\b\n\t\r+.$?*|{}()[]\\/^TEST'));
-			assert.ok(re2.test('TEST\f\b\n\t\r+X$?*|{}()[]\\/^TEST'));
+			assert.match('TEST\f\b\n\t\r+.$?*|{}()[]\\/^TEST', re1);
+			assert.match('TEST\f\b\n\t\r+X$?*|{}()[]\\/^TEST', re2);
 		}
 	});
 });
